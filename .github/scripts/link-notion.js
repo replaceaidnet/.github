@@ -46,6 +46,8 @@ async function createPRPage(relatedPageIds) {
   const prTitle = process.env.PR_TITLE;
   const prUrl = process.env.PR_URL;
 
+  const prAuthor = process.env.PR_AUTHOR || "";
+
   const properties = {
     "PR Title": {
       title: [{ text: { content: prTitle } }],
@@ -61,6 +63,9 @@ async function createPRPage(relatedPageIds) {
     },
     Status: {
       select: { name: "Open" },
+    },
+    Author: {
+      rich_text: [{ text: { content: prAuthor } }],
     },
   };
 
