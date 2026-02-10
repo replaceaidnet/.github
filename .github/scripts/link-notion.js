@@ -60,7 +60,7 @@ async function createPRPage(relatedPageIds) {
       date: { start: new Date().toISOString() },
     },
     Status: {
-      status: { name: "Open" },
+      select: { name: "Open" },
     },
   };
 
