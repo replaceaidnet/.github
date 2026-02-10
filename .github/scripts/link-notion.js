@@ -3,6 +3,7 @@ const { Client } = require("@notionhq/client");
 const notion = new Client({ auth: process.env.NOTION_TOKEN });
 
 const DATABASE_ID = process.env.NOTION_DATABASE_ID;
+const REPO_NAME = process.env.REPOSITORY_NAME || "";
 
 const NOTION_URL_PATTERN =
   /https?:\/\/(?:www\.)?notion\.(?:so|site|com)\/(?:[^/\s?#]+\/)?(?:[^/\s?#]+-)?([a-f0-9]{32}|[a-f0-9-]{36})/g;
@@ -67,6 +68,12 @@ async function createPRPage(relatedPageIds) {
     },
   };
 
+  if (REPO_NAME) {
+    properties["Repository"] = {
+      select: { name: REPO_NAME },
+    };
+  }
+
   if (relatedPageIds.length > 0) {
     properties["関連PBL"] = {
       relation: relatedPageIds.map((id) => ({ id })),
@@ -101,6 +108,12 @@ async function updatePRPage(pageId, relatedPageIds) {
       rich_text: [{ text: { content: prAuthor } }],
     },
   };
+
+  if (REPO_NAME) {
+    properties["Repository"] = {
+      select: { name: REPO_NAME },
+    };
+  }
 
   if (relatedPageIds.length > 0) {
     properties["関連PBL"] = {
