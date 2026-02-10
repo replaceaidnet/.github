@@ -34,7 +34,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: "20"
-      - run: npm install @notionhq/client
+      - run: npm install @notionhq/client@latest
       - name: Link PR to Notion
         env:
           NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
