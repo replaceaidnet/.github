@@ -27,7 +27,7 @@ async function findExistingPR(prNumber) {
     body: JSON.stringify({
       filter: {
         property: "PR Number",
-        number: { equals: parseInt(prNumber, 10) },
+        rich_text: { equals: String(prNumber) },
       },
     }),
   });
@@ -54,7 +54,7 @@ async function createPRPage(relatedPageIds) {
       url: prUrl,
     },
     "PR Number": {
-      number: parseInt(prNumber, 10),
+      rich_text: [{ text: { content: String(prNumber) } }],
     },
     Created: {
       date: { start: new Date().toISOString() },
