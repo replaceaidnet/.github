@@ -15,16 +15,30 @@ function extractPageIds(text) {
   return [...new Set(ids)];
 }
 
-// 同じPR Numberのレコードが既にあるかチェック
+// POST /databases/{id}/query を直接fetchで叩く
 async function findExistingPR(prNumber) {
-  const response = await notion.databases.query({
-    database_id: DATABASE_ID,
-    filter: {
-      property: "PR Number",
-      number: { equals: parseInt(prNumber, 10) },
+  const res = await fetch(`https://api.notion.com/v1/databases/${DATABASE_ID}/query`, {
+    method: "POST",
+    headers: {
+      "Authorization": `Bearer ${process.env.NOTION_TOKEN}`,
+      "Content-Type": "application/json",
+      "Notion-Version": "2022-06-28",
     },
+    body: JSON.stringify({
+      filter: {
+        property: "PR Number",
+        number: { equals: parseInt(prNumber, 10) },
+      },
+    }),
   });
-  return response.results[0] || null;
+
+  if (!res.ok) {
+    const err = await res.json();
+    throw new Error(`Notion query failed: ${err.message}`);
+  }
+
+  const data = await res.json();
+  return data.results[0] || null;
 }
 
 async function createPRPage(relatedPageIds) {
