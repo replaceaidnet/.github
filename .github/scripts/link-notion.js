@@ -15,7 +15,6 @@ function extractPageIds(text) {
   return [...new Set(ids)];
 }
 
-// POST /databases/{id}/query を直接fetchで叩く
 async function findExistingPR(prNumber) {
   const res = await fetch(`https://api.notion.com/v1/databases/${DATABASE_ID}/query`, {
     method: "POST",
@@ -45,7 +44,6 @@ async function createPRPage(relatedPageIds) {
   const prNumber = process.env.PR_NUMBER;
   const prTitle = process.env.PR_TITLE;
   const prUrl = process.env.PR_URL;
-
   const prAuthor = process.env.PR_AUTHOR || "";
 
   const properties = {
@@ -90,6 +88,7 @@ async function createPRPage(relatedPageIds) {
 async function updatePRPage(pageId, relatedPageIds) {
   const prTitle = process.env.PR_TITLE;
   const prUrl = process.env.PR_URL;
+  const prAuthor = process.env.PR_AUTHOR || "";
 
   const properties = {
     "PR Title": {
@@ -97,6 +96,9 @@ async function updatePRPage(pageId, relatedPageIds) {
     },
     "GitHub URL": {
       url: prUrl,
+    },
+    Author: {
+      rich_text: [{ text: { content: prAuthor } }],
     },
   };
 
