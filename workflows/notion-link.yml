@@ -24,7 +24,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          repository: your-org/.github  # ← 自分のorg名に変更
+          repository: replaceaidnet/.github
       - uses: actions/setup-node@v4
         with:
           node-version: '20'
