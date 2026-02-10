@@ -18,6 +18,10 @@ on:
         type: string
         required: false
         default: ""
+      repository_name:
+        type: string
+        required: false
+        default: ""
     secrets:
       NOTION_TOKEN:
         required: true
@@ -39,6 +43,7 @@ jobs:
         env:
           NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
           NOTION_DATABASE_ID: ${{ secrets.NOTION_DATABASE_ID }}
+          REPOSITORY_NAME: ${{ inputs.repository_name }}
           PR_BODY: ${{ inputs.pr_body }}
           PR_TITLE: ${{ inputs.pr_title }}
           PR_URL: ${{ inputs.pr_url }}
