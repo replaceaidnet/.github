@@ -14,8 +14,14 @@ on:
       pr_number:
         type: string
         required: true
+      pr_author:
+        type: string
+        required: false
+        default: ""
     secrets:
       NOTION_TOKEN:
+        required: true
+      NOTION_DATABASE_ID:
         required: true
 
 jobs:
@@ -27,13 +33,15 @@ jobs:
           repository: replaceaidnet/.github
       - uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: "20"
       - run: npm install @notionhq/client
       - name: Link PR to Notion
         env:
           NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
+          NOTION_DATABASE_ID: ${{ secrets.NOTION_DATABASE_ID }}
           PR_BODY: ${{ inputs.pr_body }}
           PR_TITLE: ${{ inputs.pr_title }}
           PR_URL: ${{ inputs.pr_url }}
           PR_NUMBER: ${{ inputs.pr_number }}
+          PR_AUTHOR: ${{ inputs.pr_author }}
         run: node .github/scripts/link-notion.js
