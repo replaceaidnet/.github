@@ -18,6 +18,14 @@ on:
         type: string
         required: false
         default: ""
+      pr_merged:
+        type: string
+        required: false
+        default: "false"
+      pr_action:
+        type: string
+        required: false
+        default: "opened"
       repository_name:
         type: string
         required: false
@@ -49,4 +57,6 @@ jobs:
           PR_URL: ${{ inputs.pr_url }}
           PR_NUMBER: ${{ inputs.pr_number }}
           PR_AUTHOR: ${{ inputs.pr_author }}
+          PR_MERGED: ${{ inputs.pr_merged }}
+          PR_ACTION: ${{ inputs.pr_action }}
         run: node .github/scripts/link-notion.js
