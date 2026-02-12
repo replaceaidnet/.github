@@ -16,6 +16,15 @@ function extractPageIds(text) {
   return [...new Set(ids)];
 }
 
+function resolveStatus() {
+  const action = process.env.PR_ACTION || "opened";
+  const merged = process.env.PR_MERGED === "true";
+
+  if (action === "closed" && merged) return "Merged";
+  if (action === "closed") return "Closed";
+  return "Open";
+}
+
 async function findExistingPR(prNumber) {
   const res = await fetch(`https://api.notion.com/v1/databases/${DATABASE_ID}/query`, {
     method: "POST",
@@ -61,7 +70,7 @@ async function createPRPage(relatedPageIds) {
       date: { start: new Date().toISOString() },
     },
     Status: {
-      select: { name: "Open" },
+      select: { name: resolveStatus() },
     },
     Author: {
       rich_text: [{ text: { content: prAuthor } }],
@@ -96,6 +105,7 @@ async function updatePRPage(pageId, relatedPageIds) {
   const prTitle = process.env.PR_TITLE;
   const prUrl = process.env.PR_URL;
   const prAuthor = process.env.PR_AUTHOR || "";
+  const status = resolveStatus();
 
   const properties = {
     "PR Title": {
@@ -107,7 +117,17 @@ async function updatePRPage(pageId, relatedPageIds) {
     Author: {
       rich_text: [{ text: { content: prAuthor } }],
     },
+    Status: {
+      select: { name: status },
+    },
   };
+
+  // Mergedの場合、マージ日時も更新
+  if (status === "Merged") {
+    properties["Merged"] = {
+      date: { start: new Date().toISOString() },
+    };
+  }
 
   if (REPO_NAME) {
     properties["Repository"] = {
@@ -126,7 +146,7 @@ async function updatePRPage(pageId, relatedPageIds) {
     properties,
   });
 
-  console.log(`✅ Updated existing Notion page: ${pageId}`);
+  console.log(`✅ Updated existing Notion page: ${pageId} (Status: ${status})`);
 }
 
 async function main() {
