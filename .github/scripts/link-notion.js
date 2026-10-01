@@ -25,7 +25,8 @@ function resolveStatus() {
   return "Open";
 }
 
-async function findExistingPR(prNumber) {
+// PR 番号は複数のリポで重なり、番号で探すと別リポの PR のページを上書きするため URL で探す
+async function findExistingPR(prUrl) {
   const res = await fetch(`https://api.notion.com/v1/databases/${DATABASE_ID}/query`, {
     method: "POST",
     headers: {
@@ -35,8 +36,8 @@ async function findExistingPR(prNumber) {
     },
     body: JSON.stringify({
       filter: {
-        property: "PR Number",
-        rich_text: { equals: String(prNumber) },
+        property: "GitHub URL",
+        url: { equals: prUrl },
       },
     }),
   });
@@ -165,7 +166,7 @@ async function main() {
     console.log("No Notion links found in PR body.");
   }
 
-  const existing = await findExistingPR(prNumber);
+  const existing = await findExistingPR(process.env.PR_URL);
 
   if (existing) {
     console.log(`PR #${prNumber} already exists. Updating...`);
